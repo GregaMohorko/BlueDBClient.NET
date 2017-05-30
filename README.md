@@ -20,6 +20,7 @@ class User : BlueDBEntity
 (De)Serializing entities to/from JSON:
 ```C#
 string json = JsonConvert.SerializeObject(user);
+User user = JsonConvert.DeserializeObject<User>(json);
 ```
 
 ## Requirements
