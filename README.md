@@ -7,7 +7,20 @@ Latest release: [v1.0](https://github.com/GregaMohorko/BlueDBClient.NET/releases
 You can read the documentation and tutorials under the [Wiki](https://github.com/GregaMohorko/BlueDBClient.NET/wiki).
 
 ## Short examples
-*Coming soon ...*
+Defining entity classes:
+```C#
+class User : BlueDBEntity
+{
+  // example string field
+  public static readonly Field NameField = Field.Register(nameof(Name), typeof(User));
+  public string Name { get; set; }
+}
+```
+
+(De)Serializing entities to/from JSON:
+```C#
+string json = JsonConvert.SerializeObject(user);
+```
 
 ## Requirements
 .NET Framework 4.6.1
