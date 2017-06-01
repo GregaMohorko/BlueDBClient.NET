@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace BlueDBClient.NET.IO
 {
-	sealed class EntityJsonConverter : JsonConverter
+	internal sealed class EntityJsonConverter : JsonConverter
 	{
 		private static readonly object lock_KEYCounter = new object();
 		private static volatile int _KEYCounter = 0;
@@ -48,6 +48,7 @@ namespace BlueDBClient.NET.IO
 			// Load JObject from stream
 			JObject jObject = JObject.Load(reader);
 			var session = new Dictionary<int, BlueDBEntity>();
+
 			return ReadEntity(jObject, session);
 		}
 
@@ -66,10 +67,11 @@ namespace BlueDBClient.NET.IO
 
 			BlueDBEntity entity = value as BlueDBEntity;
 			var session = new Dictionary<Type, Dictionary<int, BlueDBEntity>>();
-			WriteEntity(writer, entity, serializer, session);
+
+			WriteEntityPrivate(writer, entity, serializer, session);
 		}
 
-		private static BlueDBEntity ReadEntity(JObject jObject,Dictionary<int,BlueDBEntity> session)
+		internal static BlueDBEntity ReadEntity(JObject jObject,Dictionary<int,BlueDBEntity> session)
 		{
 			int key = ReadKey(jObject);
 			Type entityType;
@@ -243,7 +245,29 @@ namespace BlueDBClient.NET.IO
 			return null;
 		}
 
-		private static void WriteEntity(JsonWriter writer,BlueDBEntity entity,JsonSerializer serializer,Dictionary<Type,Dictionary<int,BlueDBEntity>> session)
+		internal static void WriteEntity(JsonWriter writer, BlueDBEntity entity, JsonSerializer serializer, Dictionary<Type, Dictionary<int, BlueDBEntity>> session)
+		{
+			if(entity == null) {
+				// do not explicitly serialize null values
+				return;
+			}
+
+			if(session.ContainsKey(entity.GetType())) {
+				foreach(var keyEntity in session[entity.GetType()]) {
+					if(ReferenceEquals(keyEntity.Value, entity)) {
+						writer.WriteStartObject();
+						writer.WritePropertyName("Key");
+						serializer.Serialize(writer, keyEntity.Key);
+						writer.WriteEndObject();
+						return;
+					}
+				}
+			}
+
+			WriteEntityPrivate(writer, entity, serializer, session);
+		}
+
+		private static void WriteEntityPrivate(JsonWriter writer,BlueDBEntity entity,JsonSerializer serializer,Dictionary<Type,Dictionary<int,BlueDBEntity>> session)
 		{
 			Type currentType = entity.GetType();
 
@@ -328,36 +352,15 @@ namespace BlueDBClient.NET.IO
 
 					writer.WriteStartArray();
 					foreach(var entityItem in entityList) {
-						WriteFieldEntity(writer, entityItem as BlueDBEntity, field, serializer, session);
+						WriteEntity(writer, entityItem as BlueDBEntity, serializer, session);
 					}
 					writer.WriteEndArray();
 				}else {
-					WriteFieldEntity(writer,fieldValue as BlueDBEntity,field,serializer, session);
+					WriteEntity(writer,fieldValue as BlueDBEntity,serializer, session);
 				}
 			}else {
 				serializer.Serialize(writer, fieldValue);
 			}
-		}
-
-		private static void WriteFieldEntity(JsonWriter writer,BlueDBEntity entityField, Field field, JsonSerializer serializer, Dictionary<Type, Dictionary<int, BlueDBEntity>> session)
-		{
-			if(entityField == null) {
-				// do not explicitly serialize null values
-				return;
-			}
-
-			if(session.ContainsKey(field.TypeOfEntity)) {
-				foreach(var keyEntity in session[field.TypeOfEntity]) {
-					if(ReferenceEquals(keyEntity.Value, entityField)) {
-						writer.WriteStartObject();
-						writer.WritePropertyName("Key");
-						serializer.Serialize(writer, keyEntity.Key);
-						writer.WriteEndObject();
-						return;
-					}
-				}
-			}
-			WriteEntity(writer, entityField, serializer, session);
 		}
 	}
 }

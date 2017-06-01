@@ -19,10 +19,14 @@ namespace BlueDBClient.NET.IO
 		/// <param name="entities">The entities to be encoded.</param>
 		public static string Encode<T>(List<T> entities) where T:BlueDBEntity
 		{
-			// TODO serialize list
-			// below line serializes every object on itself
-			// has to be done in a way so that there is a common session while serializing all objects of a list
-			return JsonConvert.SerializeObject(entities);
+			EntityList<T> entityList;
+			if(entities is EntityList<T>) {
+				entityList = entities as EntityList<T>;
+			}else {
+				entityList = new EntityList<T>(entities);
+			}
+
+			return JsonConvert.SerializeObject(entityList);
 		}
 
 		/// <summary>
@@ -32,6 +36,36 @@ namespace BlueDBClient.NET.IO
 		public static string Encode(BlueDBEntity entity)
 		{
 			return JsonConvert.SerializeObject(entity);
+		}
+
+		/// <summary>
+		/// Decodes provided JSON string to an entity. The type of the entity will be determined from the JSON.
+		/// </summary>
+		/// <param name="json">The JSON encoded string.</param>
+		public static BlueDBEntity Decode(string json)
+		{
+			return Decode<BlueDBEntity>(json);
+		}
+
+		/// <summary>
+		/// Decodes provided JSON string to an entity.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity to decode to.</typeparam>
+		/// <param name="json">A JSON encoded string.</param>
+		public static T Decode<T>(string json) where T:BlueDBEntity
+		{
+			return JsonConvert.DeserializeObject<T>(json);
+		}
+
+		/// <summary>
+		/// Decodes provided JSON string to a list of entities.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities in the list.</typeparam>
+		/// <param name="json">A JSON encoded string.</param>
+		/// <returns></returns>
+		public static EntityList<T> DecodeList<T>(string json) where T:BlueDBEntity
+		{
+			return JsonConvert.DeserializeObject<EntityList<T>>(json);
 		}
 	}
 }

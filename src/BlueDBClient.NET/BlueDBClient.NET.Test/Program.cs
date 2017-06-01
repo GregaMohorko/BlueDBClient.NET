@@ -57,10 +57,34 @@ namespace BlueDBClient.NET.Test
 
 			List<Test2.Entity.User> users = Test2.Data.GetDummy();
 
-			string json = JsonConvert.SerializeObject(users);
+			// version 1: uses raw List<>
+			string json1 = JsonConvert.SerializeObject(users);
+			Console.WriteLine($"Version 1 is {json1.Length} characters long.");
 			//Console.WriteLine(JArray.Parse(json).ToString());
-			List<Test2.Entity.User> usersDecoded = JsonConvert.DeserializeObject<List<Test2.Entity.User>>(json);
+			List<Test2.Entity.User> usersDecoded = JsonConvert.DeserializeObject<List<Test2.Entity.User>>(json1);
 			AssertEqual(users, usersDecoded);
+
+			// version 2: uses EntityList<>
+			EntityList<Test2.Entity.User> usersEntityList = new EntityList<Test2.Entity.User>(users);
+			string json2 = JsonConvert.SerializeObject(usersEntityList);
+			Console.WriteLine($"Version 2 is {json2.Length} characters long.");
+			Console.WriteLine($"Version 2 is {json1.Length-json2.Length} characters shorter than version 1.");
+			//Console.WriteLine(JArray.Parse(json2).ToString());
+			EntityList<Test2.Entity.User> usersEntityListDecoded = JsonConvert.DeserializeObject<EntityList<Test2.Entity.User>>(json2);
+			AssertEqual(users, usersEntityListDecoded);
+
+			// version 3: uses JSON utility class, which does the same as version 2, but the code is shorter
+			string json3 = JSON.Encode(users);
+			Debug.Assert(json2.Length == json3.Length);
+			Console.WriteLine("Version 3 is the same length as version 2.");
+			usersEntityListDecoded = JSON.DecodeList<Test2.Entity.User>(json3);
+			AssertEqual(users, usersEntityListDecoded);
+			
+			// the type should be determined from the json
+			JArray jsonArray = JArray.Parse(json3);
+			BlueDBEntity user1 = JSON.Decode(jsonArray[0].ToString());
+			Debug.Assert(user1 is Test2.Entity.User);
+			Debug.Assert(EntityUtility.AreEqual(user1, users[0]));
 		}
 
 		/// <summary>
@@ -76,9 +100,9 @@ namespace BlueDBClient.NET.Test
 
 			List<Test3.Entity.User> users = Test3.Data.GetDummy();
 
-			string json = JsonConvert.SerializeObject(users);
+			string json = JSON.Encode(users);
 			//Console.WriteLine(JArray.Parse(json).ToString());
-			List<Test3.Entity.User> usersDecoded = JsonConvert.DeserializeObject<List<Test3.Entity.User>>(json);
+			EntityList<Test3.Entity.User> usersDecoded = JSON.DecodeList<Test3.Entity.User>(json);
 			AssertEqual(users, usersDecoded);
 		}
 

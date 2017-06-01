@@ -87,6 +87,23 @@ namespace BlueDBClient.NET.Utility
 		}
 
 		/// <summary>
+		/// Determines whether the specified type to check derives from the specified generic type.
+		/// </summary>
+		/// <param name="generic">The parent generic type.</param>
+		/// <param name="toCheck">The type to check if it derives from the specified generic type.</param>
+		public static bool IsSubclassOfRawGeneric(Type generic, Type toCheck)
+		{
+			while(toCheck!=null && toCheck != typeof(object)) {
+				Type current = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+				if(generic == current) {
+					return true;
+				}
+				toCheck = toCheck.BaseType;
+			}
+			return false;
+		}
+
+		/// <summary>
 		/// Determines whether the specified type is a generic list.
 		/// </summary>
 		/// <param name="type">The type to determine.</param>
