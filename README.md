@@ -17,13 +17,13 @@ class User : BlueDBEntity
 }
 ```
 
-(De)serializing entities to/from JSON:
+(De)serializing single entities to/from JSON:
 ```C#
 string json = JSON.Encode(user);
 User user = JSON.Decode<User>(json);
 ```
 
-(De)serializing list of entities to/from JSON:
+(De)serializing lists of entities to/from JSON:
 ```C#
 string json = JSON.Encode(users);
 List<User> users = JSON.DecodeList<User>(json);
@@ -34,5 +34,10 @@ JSON utility class simply uses the [JSON.NET](http://www.newtonsoft.com/json) li
 ## Requirements
 .NET Framework 4.6.1
 
-## License
+## Author and License
+
+Grega Mohorko ([www.mohorko.info](http://www.mohorko.info))
+
+Copyright (c) 2017 Grega Mohorko
+
 [Apache License 2.0](./LICENSE)
