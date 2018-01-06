@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("BlueDBClient.NET.Test")]
+[assembly: AssemblyTitle("BlueDB.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("BlueDBClient.NET.Test")]
-[assembly: AssemblyCopyright("Copyright © Grega Mohorko 2017")]
+[assembly: AssemblyCompany("Grega Mohorko")]
+[assembly: AssemblyProduct("BlueDB.Test")]
+[assembly: AssemblyCopyright("Copyright © Grega Mohorko 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

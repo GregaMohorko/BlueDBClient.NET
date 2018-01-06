@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlueDBClient.NET.Test.Test1.Entity
+namespace BlueDB.Test.Test1.Entity
 {
 	enum UserType
 	{

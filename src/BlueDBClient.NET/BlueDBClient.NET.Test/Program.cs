@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using BlueDBClient.NET.Configuration;
-using BlueDBClient.NET.IO;
-using BlueDBClient.NET.Utility;
-using BlueDBClient.NET.Entity;
 using Newtonsoft.Json.Linq;
+using BlueDB.Configuration;
+using BlueDB.IO;
+using BlueDB.Utility;
+using BlueDB.Entity;
 
-namespace BlueDBClient.NET.Test
+namespace BlueDB.Test
 {
 	class Program
 	{
@@ -34,7 +34,7 @@ namespace BlueDBClient.NET.Test
 			Console.WriteLine("Running Test1 ...");
 			Console.WriteLine();
 
-			BlueDBClientProperties.Init<Test1.Entity.User>();
+			BlueDBProperties.Init<Test1.Entity.User>();
 
 			List<Test1.Entity.User> users = Test1.Data.GetDummy();
 			
@@ -53,7 +53,7 @@ namespace BlueDBClient.NET.Test
 			Console.WriteLine("Running Test2 ...");
 			Console.WriteLine();
 
-			BlueDBClientProperties.Init<Test2.Entity.User>();
+			BlueDBProperties.Init<Test2.Entity.User>();
 
 			List<Test2.Entity.User> users = Test2.Data.GetDummy();
 
@@ -73,7 +73,7 @@ namespace BlueDBClient.NET.Test
 			EntityList<Test2.Entity.User> usersEntityListDecoded = JsonConvert.DeserializeObject<EntityList<Test2.Entity.User>>(json2);
 			AssertEqual(users, usersEntityListDecoded);
 
-			// version 3: uses JSON utility class, which does the same as version 2, but the code is shorter
+			// version 3: uses JSON utility class, which does the same as version 2, but the code is shorter. Uses raw List<>
 			string json3 = JSON.Encode(users);
 			Debug.Assert(json2.Length == json3.Length);
 			Console.WriteLine("Version 3 is the same length as version 2.");
@@ -96,7 +96,7 @@ namespace BlueDBClient.NET.Test
 			Console.WriteLine("Running Test3 ...");
 			Console.WriteLine();
 
-			BlueDBClientProperties.Init<Test3.Entity.User>();
+			BlueDBProperties.Init<Test3.Entity.User>();
 
 			List<Test3.Entity.User> users = Test3.Data.GetDummy();
 

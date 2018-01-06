@@ -7,8 +7,8 @@
     <ProjectGuid>{862F64B2-D903-4204-83B1-7244A6D48661}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BlueDBClient.NET</RootNamespace>
-    <AssemblyName>BlueDBClient.NET</AssemblyName>
+    <RootNamespace>BlueDB</RootNamespace>
+    <AssemblyName>BlueDB</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,8 +20,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\BlueDBClient.NET.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+    <DocumentationFile>bin\Debug\BlueDB.xml</DocumentationFile>
+    <NoWarn>
+    </NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,11 +31,20 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\BlueDB.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>GM.StrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GM.Utility, Version=1.1.2.0, Culture=neutral, PublicKeyToken=a1ae152199607549, processorArchitecture=MSIL">
+      <HintPath>..\packages\GM.Utility.1.1.2\lib\net461\GM.Utility.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,21 +56,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\BlueDBClientProperties.cs" />
+    <Compile Include="Configuration\BlueDBProperties.cs" />
     <Compile Include="Entity\BlueDBEntity.cs" />
     <Compile Include="Entity\EntityList.cs" />
     <Compile Include="Entity\Fields\Field.cs" />
     <Compile Include="Entity\Fields\FieldType.cs" />
-    <Compile Include="Entity\ObservableBlueDBEntity.cs" />
     <Compile Include="IO\EntityJsonConverter.cs" />
     <Compile Include="IO\EntityListJsonConverter.cs" />
     <Compile Include="IO\JSON.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\EntityUtility.cs" />
-    <Compile Include="Utility\ReflectionUtility.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <None Include="BlueDBClient.NET.licenseheader" />
+    <None Include="GM.StrongNameKey.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

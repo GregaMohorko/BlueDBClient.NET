@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BlueDBClient.NET.Test.Test3.Entity;
+using BlueDB.Test.Test3.Entity;
 
-namespace BlueDBClient.NET.Test.Test3
+namespace BlueDB.Test.Test3
 {
 	static class Data
 	{

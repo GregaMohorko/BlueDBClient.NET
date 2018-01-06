@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BlueDBClient.NET.Entity.Fields;
+using BlueDB.Entity.Fields;
 
-namespace BlueDBClient.NET.Test.Test3.Entity
+namespace BlueDB.Test.Test3.Entity
 {
 	class Student:User
 	{

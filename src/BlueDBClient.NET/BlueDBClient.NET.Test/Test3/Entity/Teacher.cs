@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlueDBClient.NET.Test.Test3.Entity
+namespace BlueDB.Test.Test3.Entity
 {
 	class Teacher : User
 	{

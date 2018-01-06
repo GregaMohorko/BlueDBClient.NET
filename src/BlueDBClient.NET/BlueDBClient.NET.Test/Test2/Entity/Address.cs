@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BlueDBClient.NET.Entity;
-using BlueDBClient.NET.Entity.Fields;
+using BlueDB.Entity;
+using BlueDB.Entity.Fields;
 
-namespace BlueDBClient.NET.Test.Test2.Entity
+namespace BlueDB.Test.Test2.Entity
 {
 	class Address:BlueDBEntity
 	{

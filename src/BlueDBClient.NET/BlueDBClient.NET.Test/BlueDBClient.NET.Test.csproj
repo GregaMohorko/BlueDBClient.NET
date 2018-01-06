@@ -7,8 +7,8 @@
     <ProjectGuid>{8ACC6B08-FD00-478E-AFEA-388CC8E03D73}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BlueDBClient.NET.Test</RootNamespace>
-    <AssemblyName>BlueDBClient.NET.Test</AssemblyName>
+    <RootNamespace>BlueDB.Test</RootNamespace>
+    <AssemblyName>BlueDB.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BlueDBClient.NET">
-      <HintPath>..\BlueDBClient.NET\bin\Debug\BlueDBClient.NET.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -68,6 +65,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BlueDBClient.NET\BlueDBClient.NET.csproj">
+      <Project>{862f64b2-d903-4204-83b1-7244a6d48661}</Project>
+      <Name>BlueDBClient.NET</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
