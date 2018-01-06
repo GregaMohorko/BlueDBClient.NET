@@ -1,17 +1,37 @@
-﻿using System;
+﻿/*
+   Copyright 2018 Grega Mohorko
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+Project: BlueDBClient.NET
+Created: 2018-1-5
+Author: GregaMohorko
+*/
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BlueDBClient.NET.Configuration;
-using BlueDBClient.NET.Entity;
-using BlueDBClient.NET.Entity.Fields;
-using BlueDBClient.NET.Utility;
+using BlueDB.Configuration;
+using BlueDB.Entity;
+using BlueDB.Entity.Fields;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using GM.Utility;
 
-namespace BlueDBClient.NET.IO
+namespace BlueDB.IO
 {
 	internal sealed class EntityJsonConverter : JsonConverter
 	{
@@ -74,15 +94,14 @@ namespace BlueDBClient.NET.IO
 		internal static BlueDBEntity ReadEntity(JObject jObject,Dictionary<int,BlueDBEntity> session)
 		{
 			int key = ReadKey(jObject);
-			Type entityType;
-			BlueDBEntity entityObject = ReadType(jObject, key, out entityType, session);
+			BlueDBEntity entityObject = ReadType(jObject, key, out Type entityType, session);
 			if(entityObject != null) {
 				// was found in the session by key
 				return entityObject;
 			}
 
 			// create the entity
-			entityObject = Activator.CreateInstance(entityType,true) as BlueDBEntity;
+			entityObject = (BlueDBEntity)Activator.CreateInstance(entityType,true);
 			// add to lookup table
 			session.Add(key, entityObject);
 
@@ -121,7 +140,7 @@ namespace BlueDBClient.NET.IO
 
 					object propertyValue;
 					switch(field.DataType) {
-						case FieldType.Property:
+						case FieldType.PROPERTY:
 							switch(jPropertyValue.Type) {
 								case JTokenType.String:
 									propertyValue = jPropertyValue.Value<string>();
@@ -160,10 +179,10 @@ namespace BlueDBClient.NET.IO
 									throw new Exception($"Unsupported JSON type '{jPropertyValue.Type}'.");
 							}
 							break;
-						case FieldType.Entity:
+						case FieldType.ENTITY:
 							propertyValue=ReadEntity((JObject)jPropertyValue, session);
 							break;
-						case FieldType.List:
+						case FieldType.LIST:
 							JArray array = jPropertyValue as JArray;
 							IList list = Activator.CreateInstance(field.Type, array.Count) as IList;
 							foreach(JToken item in array) {
@@ -175,8 +194,8 @@ namespace BlueDBClient.NET.IO
 						default:
 							throw new Exception($"Unsupported field data type '{field.DataType}'.");
 					}
-
-					ReflectionUtility.SetProperty(entityObject, field.Name, propertyValue);
+					
+					entityObject.SetProperty(field.Name, propertyValue);
 				}
 				
 				if(currentType.BaseType == typeof(BlueDBEntity)) {
@@ -188,8 +207,7 @@ namespace BlueDBClient.NET.IO
 				}
 
 				int parentKey = ReadKey(parentJObject);
-				Type parentType;
-				BlueDBEntity parentEntity = ReadType(parentJObject, parentKey, out parentType, session);
+				BlueDBEntity parentEntity = ReadType(parentJObject, parentKey, out Type parentType, session);
 				if(parentEntity != null) {
 					// what? parent entity should be null!
 					// are two different entities sharing the same parent?
@@ -232,10 +250,10 @@ namespace BlueDBClient.NET.IO
 				return session[key];
 			}
 
-			string fullEntityTypeName = $"{BlueDBClientProperties.Instance.EntityNamespace}.{type}, {BlueDBClientProperties.Instance.EntityAssemblyName}";
+			string fullEntityTypeName = $"{BlueDBProperties.Instance.EntityNamespace}.{type}, {BlueDBProperties.Instance.EntityAssemblyName}";
 			entityType = Type.GetType(fullEntityTypeName);
 			if(entityType == null) {
-				throw new Exception($"Could not find an entity '{type}' in namespace '{BlueDBClientProperties.Instance.EntityNamespace}' in assembly '{BlueDBClientProperties.Instance.EntityAssemblyName}'.");
+				throw new Exception($"Could not find an entity '{type}' in namespace '{BlueDBProperties.Instance.EntityNamespace}' in assembly '{BlueDBProperties.Instance.EntityAssemblyName}'.");
 			}
 			if(!entityType.IsSubclassOf(typeof(BlueDBEntity))) {
 				// every entity type must be a subclass of BlueDBEntity
@@ -347,7 +365,7 @@ namespace BlueDBClient.NET.IO
 
 			// value
 			if(field.IsEntity) {
-				if(field.DataType == FieldType.List) {
+				if(field.DataType == FieldType.LIST) {
 					IList entityList = fieldValue as IList;
 
 					writer.WriteStartArray();
