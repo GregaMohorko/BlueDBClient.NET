@@ -12,7 +12,7 @@ Defining entity classes:
 class User : BlueDBEntity
 {
   // example string field
-  public static readonly Field NameField = Field.Register(nameof(Name), typeof(User));
+  public static readonly Field NameField = Field.Register(nameof(Name));
   public string Name { get; set; }
 }
 ```

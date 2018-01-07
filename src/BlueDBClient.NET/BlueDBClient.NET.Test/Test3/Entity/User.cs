@@ -10,10 +10,10 @@ namespace BlueDB.Test.Test3.Entity
 {
 	class User:BlueDBEntity
 	{
-		public static readonly Field NameField = Field.Register(nameof(Name), typeof(User));
+		public static readonly Field NameField = Field.Register(nameof(Name));
 		public string Name { get; set; }
 
-		public static readonly Field AddressField = Field.Register(nameof(Address), typeof(User));
+		public static readonly Field AddressField = Field.Register(nameof(Address));
 		public Address Address { get; set; }
 	}
 }

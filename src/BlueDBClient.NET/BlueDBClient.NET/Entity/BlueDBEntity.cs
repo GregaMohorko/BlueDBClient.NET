@@ -44,7 +44,7 @@ namespace BlueDB.Entity
 		/// <summary>
 		/// Represents the <see cref="ID"/> field.
 		/// </summary>
-		public static readonly Field IDField = Field.Register(nameof(ID), typeof(BlueDBEntity));
+		public static readonly Field IDField = Field.Register(nameof(ID));
 		/// <summary>
 		/// The ID of this entity.
 		/// </summary>

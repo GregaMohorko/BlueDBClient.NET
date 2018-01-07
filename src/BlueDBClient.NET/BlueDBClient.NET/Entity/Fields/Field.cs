@@ -21,6 +21,7 @@ Author: GregaMohorko
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using GM.Utility;
@@ -114,22 +115,26 @@ namespace BlueDB.Entity.Fields
 
 		/// <summary>
 		/// Registers a new field to the specified entity type.
+		/// <para>This should only be called inside the entity in which this field is in, because the entity type will be read using reflection.</para>
 		/// </summary>
 		/// <param name="name">The name of the field.</param>
-		/// <param name="entityType">The type of the entity.</param>
-		public static Field Register(string name, Type entityType)
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		public static Field Register(string name)
 		{
+			Type entityType = Utility.ReflectionUtility.GetCallingType();
 			return new Field(name, entityType, false);
 		}
 
 		/// <summary>
 		/// Registers a new hidden field to the specified entity type. Hidden fields are almost always ignored when loading etc.. (use this for passwords and so on).
+		/// <para>This should only be called inside the entity in which this field is in, because the entity type will be read using reflection.</para>
 		/// </summary>
 		/// <param name="name">The name of the field.</param>
-		/// <param name="entityType">The type of the entity.</param>
-		public static Field RegisterHidden(string name, Type entityType)
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		public static Field RegisterHidden(string name)
 		{
-			return new Field(name, entityType, true);
+			Type entityType = Utility.ReflectionUtility.GetCallingType();
+			return new Field(name,entityType, true);
 		}
 	}
 }
