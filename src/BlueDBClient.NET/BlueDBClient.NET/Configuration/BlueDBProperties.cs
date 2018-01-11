@@ -43,31 +43,18 @@ namespace BlueDB.Configuration
 			get
 			{
 				if(_instance == null) {
-					throw new InvalidOperationException("You need to initialize BlueDB. Call BlueDB.Configuration.BlueDBProperties.Init() method.");
+					throw new InvalidOperationException("You need to initialize BlueDB. Call BlueDB.BlueDBLib.Init() method.");
 				}
 				return _instance;
 			}
 		}
 
-		/// <summary>
-		/// Initializes BlueDB. The entity namespace and assembly is extracted from the specified example entity type.
-		/// </summary>
-		/// <typeparam name="T">One of the entity types from which to extract the entity namespace and assembly from.</typeparam>
-		public static void Init<T>()
-		{
-			Init(typeof(T));
-		}
-
-		/// <summary>
-		/// Initializes BlueDB. The entity namespace and assembly is extracted from the specified example entity type.
-		/// </summary>
-		/// <param name="entityExampleType">One of the entity types from which to extract the entity namespace and assembly from.</param>
-		public static void Init(Type entityExampleType)
+		internal static void Initialize()
 		{
 			if(_instance != null) {
 				BlueDBEntity.ClearAllFields();
 			}
-			_instance = new BlueDBProperties(entityExampleType);
+			_instance = new BlueDBProperties();
 		}
 
 		/// <summary>
@@ -79,10 +66,11 @@ namespace BlueDB.Configuration
 		/// </summary>
 		public readonly string EntityAssemblyName;
 
-		private BlueDBProperties(Type entityExampleType)
+		private BlueDBProperties()
 		{
-			EntityNamespace = entityExampleType.Namespace;
-			Assembly assembly = Assembly.GetAssembly(entityExampleType);
+			Type entitySampleType = BlueDBLib.SampleEntityType;
+			EntityNamespace = entitySampleType.Namespace;
+			Assembly assembly = Assembly.GetAssembly(entitySampleType);
 			EntityAssemblyName = assembly.FullName;
 		}
 	}

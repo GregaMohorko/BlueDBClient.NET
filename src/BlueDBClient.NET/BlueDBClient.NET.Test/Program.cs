@@ -33,8 +33,8 @@ namespace BlueDB.Test
 			Console.WriteLine();
 			Console.WriteLine("Running Test1 ...");
 			Console.WriteLine();
-
-			BlueDBProperties.Init<Test1.Entity.User>();
+			
+			BlueDBLib.Init<Test1.Entity.User>();
 
 			List<Test1.Entity.User> users = Test1.Data.GetDummy();
 			
@@ -52,8 +52,8 @@ namespace BlueDB.Test
 			Console.WriteLine();
 			Console.WriteLine("Running Test2 ...");
 			Console.WriteLine();
-
-			BlueDBProperties.Init<Test2.Entity.User>();
+			
+			BlueDBLib.Init<Test2.Entity.User>();
 
 			List<Test2.Entity.User> users = Test2.Data.GetDummy();
 
@@ -95,8 +95,8 @@ namespace BlueDB.Test
 			Console.WriteLine();
 			Console.WriteLine("Running Test3 ...");
 			Console.WriteLine();
-
-			BlueDBProperties.Init<Test3.Entity.User>();
+			
+			BlueDBLib.Init<Test3.Entity.User>();
 
 			List<Test3.Entity.User> users = Test3.Data.GetDummy();
 
