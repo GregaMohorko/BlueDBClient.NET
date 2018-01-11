@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BlueDB.Entity;
@@ -120,6 +121,73 @@ namespace BlueDB.Utility
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Determines whether the specified type is an entity (a subclass of <see cref="BlueDBEntity"/>).
+		/// </summary>
+		/// <param name="type">The type to check.</param>
+		public static bool IsEntity(Type type)
+		{
+			return type.IsSubclassOf(typeof(BlueDBEntity));
+		}
+
+		/// <summary>
+		/// Determines whether the specified entity type is a strong entity.
+		/// </summary>
+		/// <param name="entityType">The entity type to determine whether it is a strong entity.</param>
+		public static bool IsStrongEntity(Type entityType)
+		{
+			if(entityType.BaseType == typeof(BlueDBEntity)) {
+				return true;
+			}
+			if(IsEntity(entityType)) {
+				// is esentually an entity
+				// check if it has anly non-table entity classes before the BlueDBEntity
+				Type currentBaseType = entityType.BaseType;
+				while(true) {
+					if(currentBaseType == typeof(BlueDBEntity)) {
+						return true;
+					}
+					if(!IsNonTableEntityClass(currentBaseType)) {
+						break;
+					}
+					currentBaseType = currentBaseType.BaseType;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Determines whether the specified entity type is a sub entity.
+		/// </summary>
+		/// <param name="entityType">The entity type to determine whether it is a sub entity.</param>
+		public static bool IsSubEntity(Type entityType)
+		{
+			return IsEntity(entityType) && !IsStrongEntity(entityType);
+		}
+
+		/// <summary>
+		/// Determines whether the specified type is a non-table entity class.
+		/// </summary>
+		/// <param name="type">The type to determine whether it is a non-table entity class.</param>
+		public static bool IsNonTableEntityClass(Type type)
+		{
+			MethodInfo method = type.GetMethod(nameof(BlueDBEntity.IsNonTableEntity));
+			return (bool)method.Invoke(null, null);
+		}
+
+		/// <summary>
+		/// Gets the parent entity type of the specified sub entity type.
+		/// </summary>
+		/// <param name="subEntityType">The sub entity type of which to get the parent entity type.</param>
+		public static Type GetParentEntity(Type subEntityType)
+		{
+			Type currentType = subEntityType.BaseType;
+			while(IsNonTableEntityClass(currentType)) {
+				currentType = currentType.BaseType;
+			}
+			return currentType;
 		}
 	}
 }

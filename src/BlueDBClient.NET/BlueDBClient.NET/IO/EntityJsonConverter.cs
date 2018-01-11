@@ -30,6 +30,7 @@ using BlueDB.Entity.Fields;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using GM.Utility;
+using BlueDB.Utility;
 
 namespace BlueDB.IO
 {
@@ -198,7 +199,7 @@ namespace BlueDB.IO
 					entityObject.SetProperty(field.Name, propertyValue);
 				}
 				
-				if(currentType.BaseType == typeof(BlueDBEntity)) {
+				if(EntityUtility.IsStrongEntity(currentType)) {
 					// no more parent entities
 					break;
 				}
@@ -214,7 +215,7 @@ namespace BlueDB.IO
 					// hmmmm... that is wrong
 					throw new Exception("Bad format: two different entities are sharing the same parent. That should not happen, that is a wrong design.");
 				}
-				if(parentType != currentType.BaseType) {
+				if(parentType != EntityUtility.GetParentEntity(currentType)) {
 					throw new Exception($"Bad JSON format: parent type of '{currentType.Name}' should be '{currentType.BaseType.Name}', but it is '{parentType.Name}'.");
 				}
 				currentType = parentType;

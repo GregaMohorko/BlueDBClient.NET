@@ -26,6 +26,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BlueDB.Entity.Fields;
 using BlueDB.IO;
+using BlueDB.Utility;
 using GM.Utility;
 using Newtonsoft.Json;
 
@@ -56,7 +57,7 @@ namespace BlueDB.Entity
 		/// </summary>
 		public bool IsPersistent => ID > 0;
 		#endregion // Public Properties
-
+		
 		#region OBJECT
 		/// <summary>
 		/// Determines whether the provided entity is equal to the current entity. True when they are the same type and have the same ID.
@@ -240,6 +241,11 @@ namespace BlueDB.Entity
 		}
 		#endregion // Public Utility
 
+		/// <summary>
+		/// Override this method and return true if you want to declare a class that represents a base entity class and is itself not a real table in the database.
+		/// </summary>
+		public virtual bool IsNonTableEntity() { return false; }
+
 		private static Dictionary<Type, List<Field>> _allFields;
 		private static Dictionary<Type,List<Field>> AllFields
 		{
@@ -286,9 +292,9 @@ namespace BlueDB.Entity
 		/// <param name="includeHidden">Determines whether to include hidden fields.</param>
 		public static List<Field> GetAllFields(Type type,bool includeInherited=true, bool includeHidden = false)
 		{
-			bool isBaseEntityClass = type.Equals(typeof(BlueDBEntity));
-			bool isStrongEntity = type.BaseType.Equals(typeof(BlueDBEntity)) || isBaseEntityClass;
-			if(!type.IsSubclassOf(typeof(BlueDBEntity)) && !isBaseEntityClass) {
+			bool isBaseEntityClass = type==typeof(BlueDBEntity);
+			bool isStrongEntity = EntityUtility.IsStrongEntity(type);
+			if(!EntityUtility.IsEntity(type) && !isBaseEntityClass) {
 				throw new ArgumentException($"The provided type '{type}' is not a subclass of BlueDBEntity.");
 			}
 
@@ -302,9 +308,10 @@ namespace BlueDB.Entity
 				fields = new List<Field>();
 			}
 
-			if(!isStrongEntity && includeInherited) {
+			if(!isBaseEntityClass && !isStrongEntity && includeInherited) {
 				// is a SubEntity, include fields of parents
-				fields.AddRange(GetAllFields(type.BaseType, true,includeHidden));
+				Type parentType = EntityUtility.GetParentEntity(type);
+				fields.AddRange(GetAllFields(parentType, true,includeHidden));
 			}
 			return fields;
 		}
@@ -359,29 +366,42 @@ namespace BlueDB.Entity
 		#region INTERNAL STATIC UTILITY
 		internal static void RegisterField(Type entityType, Field field)
 		{
-			if(!entityType.Equals(typeof(BlueDBEntity)) && !entityType.IsSubclassOf(typeof(BlueDBEntity))) {
+			if(entityType!=typeof(BlueDBEntity) && !EntityUtility.IsEntity(entityType)) {
 				throw new ArgumentException($"Cannot register field '{field.Name}' because the type '{entityType}' is not a subclass of BlueDBEntity.");
 			}
 
 			List<Field> fieldsOfEntityType;
+			List<Field> fieldsOfEntityTypeWithHidden;
 			if(AllFields.ContainsKey(entityType)) {
 				fieldsOfEntityType = AllFields[entityType];
-			}else {
+				fieldsOfEntityTypeWithHidden = AllFieldsWithHidden[entityType];
+			} else {
 				fieldsOfEntityType = new List<Field>();
+				fieldsOfEntityTypeWithHidden = new List<Field>();
 				AllFields.Add(entityType, fieldsOfEntityType);
+				AllFieldsWithHidden.Add(entityType, fieldsOfEntityTypeWithHidden);
 				// if it is a StrongEntity, add the fields of the BlueDBEntity
-				if(entityType.BaseType.Equals(typeof(BlueDBEntity))) {
-					fieldsOfEntityType.AddRange(GetAllFields<BlueDBEntity>());
+				if(EntityUtility.IsStrongEntity(entityType)) {
+					List<Field> bluedbFields = GetAllFields<BlueDBEntity>();
+					fieldsOfEntityType.AddRange(bluedbFields);
+					fieldsOfEntityTypeWithHidden.AddRange(bluedbFields);
 				}
 			}
-			fieldsOfEntityType.Add(field);
+			
+			fieldsOfEntityTypeWithHidden.Add(field);
+			if(!field.IsHidden) {
+				fieldsOfEntityType.Add(field);
+			}
 		}
 
 		internal static void ClearAllFields()
 		{
 			List<Field> baseFields = AllFields[typeof(BlueDBEntity)];
+			List<Field> baseFieldsWithHidden = AllFieldsWithHidden[typeof(BlueDBEntity)];
 			AllFields.Clear();
+			AllFieldsWithHidden.Clear();
 			AllFields.Add(typeof(BlueDBEntity), baseFields);
+			AllFieldsWithHidden.Add(typeof(BlueDBEntity), baseFieldsWithHidden);
 		}
 		#endregion // Internal Static Utility
 	}
