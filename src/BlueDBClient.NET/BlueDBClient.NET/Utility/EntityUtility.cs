@@ -168,13 +168,13 @@ namespace BlueDB.Utility
 		}
 
 		/// <summary>
-		/// Determines whether the specified type is a non-table entity class.
+		/// Determines whether the specified type is a non-table entity class (implements <see cref="INonTableEntityClass{TNonTableEntity}"/>).
 		/// </summary>
 		/// <param name="type">The type to determine whether it is a non-table entity class.</param>
 		public static bool IsNonTableEntityClass(Type type)
 		{
-			MethodInfo method = type.GetMethod(nameof(BlueDBEntity.IsNonTableEntity));
-			return (bool)method.Invoke(null, null);
+			Type nonTableInterface = typeof(INonTableEntityClass<>).MakeGenericType(type);
+			return nonTableInterface.IsAssignableFrom(type);
 		}
 
 		/// <summary>

@@ -24,6 +24,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using BlueDB.Utility;
 using GM.Utility;
 
 namespace BlueDB.Entity.Fields
@@ -85,7 +86,7 @@ namespace BlueDB.Entity.Fields
 			_type = ReflectionUtility.GetPropertyType(EntityType, Name);
 
 			// determine the data type
-			if(Type.IsSubclassOf(typeof(BlueDBEntity))) {
+			if(EntityUtility.IsEntity(Type)) {
 				_dataType = FieldType.ENTITY;
 				_isEntity = true;
 				_typeOfEntity = Type;

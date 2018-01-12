@@ -241,11 +241,6 @@ namespace BlueDB.Entity
 		}
 		#endregion // Public Utility
 
-		/// <summary>
-		/// Override this method and return true if you want to declare a class that represents a base entity class and is itself not a real table in the database.
-		/// </summary>
-		public virtual bool IsNonTableEntity() { return false; }
-
 		private static Dictionary<Type, List<Field>> _allFields;
 		private static Dictionary<Type,List<Field>> AllFields
 		{

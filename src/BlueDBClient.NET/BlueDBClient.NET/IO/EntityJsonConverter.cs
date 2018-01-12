@@ -254,7 +254,7 @@ namespace BlueDB.IO
 				// is only a key
 				// should be already present in the lookup table
 				if(!session.ContainsKey(key)) {
-					throw new Exception("Could not read entity from JSON because of bad format: key not found.");
+					throw new Exception("Could not read entity from JSON because of bad format: key not found. In most cases, this happens because you didn't use the BlueDB.Entity.EntityList collection.");
 				}
 				entityType = null;
 				return session[key];
