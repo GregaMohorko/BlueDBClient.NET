@@ -144,16 +144,25 @@ namespace BlueDB.IO
 						case FieldType.PROPERTY:
 							switch(jPropertyValue.Type) {
 								case JTokenType.String:
-									propertyValue = jPropertyValue.Value<string>();
 									if(field.Type == typeof(TimeSpan)) {
-										propertyValue = TimeSpan.Parse((string)propertyValue);
+										//propertyValue = TimeSpan.Parse((jPropertyValue.Value<string>()));
+										propertyValue = jPropertyValue.Value<TimeSpan?>();
+									} else if(field.Type == typeof(DateTime)) {
+										propertyValue= jPropertyValue.Value<DateTime?>();
+									} else {
+										propertyValue = jPropertyValue.Value<string>();
 									}
 									break;
 								case JTokenType.Integer:
-									propertyValue = jPropertyValue.Value<int?>();
-									if(field.Type.IsEnum) {
-										propertyValue = Enum.ToObject(field.Type,propertyValue);
-										break;
+									if(field.Type == typeof(int)) {
+										propertyValue = jPropertyValue.Value<int?>();
+									}else if(field.Type == typeof(long)) {
+										propertyValue = jPropertyValue.Value<long?>();
+									} else if(field.Type.IsEnum) {
+										propertyValue = jPropertyValue.Value<long?>();
+										propertyValue = Enum.ToObject(field.Type, propertyValue);
+									} else {
+										throw new Exception($"Field '{field.Name}' was of wrong type: should be either int, long or enum.");
 									}
 									break;
 								case JTokenType.Float:
