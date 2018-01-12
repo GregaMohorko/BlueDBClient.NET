@@ -302,7 +302,7 @@ namespace BlueDB.IO
 
 			int subEntityCount = 0;
 			// while current type is a SubEntity
-			while(currentType.BaseType != typeof(BlueDBEntity)) {
+			while(EntityUtility.IsSubEntity(currentType)) {
 				++subEntityCount;
 				if(subEntityCount > 1) {
 					writer.WritePropertyName(currentType.Name);
@@ -318,8 +318,8 @@ namespace BlueDB.IO
 					fields.RemoveAt(i--);
 					WriteField(entity, field, writer, serializer,session);
 				}
-
-				currentType = currentType.BaseType;
+				
+				currentType = EntityUtility.GetParentEntity(currentType);
 				key = GetNextKEY();
 				writer.WritePropertyName(currentType.Name);
 			}
