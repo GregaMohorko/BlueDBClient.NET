@@ -123,7 +123,7 @@ namespace BlueDB.IO
 					}
 				}
 
-				List<Field> fields = BlueDBEntity.GetAllFields(currentType, false);
+				List<Field> fields = BlueDBEntity.GetAllFields(currentType, false, true);
 				
 				foreach(var property in propertiesObject) {
 					string propertyName = property.Key;
@@ -298,7 +298,7 @@ namespace BlueDB.IO
 			int key = GetNextKEY();
 			session[currentType].Add(key, entity);
 
-			List<Field> fields = BlueDBEntity.GetAllFields(currentType);
+			List<Field> fields = BlueDBEntity.GetAllFields(currentType,true,true);
 
 			int subEntityCount = 0;
 			// while current type is a SubEntity
