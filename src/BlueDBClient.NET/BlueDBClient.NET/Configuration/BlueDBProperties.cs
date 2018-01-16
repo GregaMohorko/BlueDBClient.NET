@@ -66,6 +66,11 @@ namespace BlueDB.Configuration
 		/// </summary>
 		public readonly string EntityAssemblyName;
 
+		/// <summary>
+		/// The format for serializing <see cref="DateTime"/> properties.
+		/// </summary>
+		public string Format_DateTime = "yyyy-MM-dd hh:mm:ss";
+
 		private BlueDBProperties()
 		{
 			Type entitySampleType = BlueDBLib.SampleEntityType;

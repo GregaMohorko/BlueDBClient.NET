@@ -387,7 +387,13 @@ namespace BlueDB.IO
 					WriteEntity(writer,fieldValue as BlueDBEntity,serializer, session);
 				}
 			}else {
-				serializer.Serialize(writer, fieldValue);
+				if(field.Type == typeof(DateTime)) {
+					string format = BlueDBProperties.Instance.Format_DateTime;
+					string dateTimeString = ((DateTime)fieldValue).ToString(format);
+					serializer.Serialize(writer, dateTimeString);
+				} else {
+					serializer.Serialize(writer, fieldValue);
+				}
 			}
 		}
 	}
