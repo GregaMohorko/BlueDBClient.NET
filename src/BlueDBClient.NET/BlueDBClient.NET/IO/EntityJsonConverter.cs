@@ -36,6 +36,10 @@ namespace BlueDB.IO
 {
 	internal sealed class EntityJsonConverter : JsonConverter
 	{
+		internal const string ARRAY_TYPE= "Type";
+		internal const string ARRAY_KEY= "BlueDBKey";
+		internal const string ARRAY_PROPERTIES= "Properties";
+
 		private static readonly object lock_KEYCounter = new object();
 		private static volatile int _KEYCounter = 0;
 		private static int GetNextKEY()
@@ -113,7 +117,7 @@ namespace BlueDB.IO
 				// resolve properties
 				JObject propertiesObject;
 				{
-					JToken properties = currentJObject["Properties"];
+					JToken properties = currentJObject[ARRAY_PROPERTIES];
 					if(properties == null) {
 						throw new Exception("Bad JSON format: no Properties.");
 					}
@@ -237,7 +241,7 @@ namespace BlueDB.IO
 
 		private static int ReadKey(JObject jObject)
 		{
-			JToken jKey = jObject["Key"];
+			JToken jKey = jObject[ARRAY_KEY];
 			if(jKey == null) {
 				throw new Exception("Bad JSON format: no Key in an entity object.");
 			}
@@ -249,7 +253,7 @@ namespace BlueDB.IO
 		/// </summary>
 		private static BlueDBEntity ReadType(JObject jObject, int key, out Type entityType, Dictionary<int, BlueDBEntity> session)
 		{
-			string type = jObject["Type"]?.Value<string>();
+			string type = jObject[ARRAY_TYPE]?.Value<string>();
 			if(type == null) {
 				// is only a key
 				// should be already present in the lookup table
@@ -284,7 +288,7 @@ namespace BlueDB.IO
 				foreach(var keyEntity in session[entity.GetType()]) {
 					if(ReferenceEquals(keyEntity.Value, entity)) {
 						writer.WriteStartObject();
-						writer.WritePropertyName("Key");
+						writer.WritePropertyName(ARRAY_KEY);
 						serializer.Serialize(writer, keyEntity.Key);
 						writer.WriteEndObject();
 						return;
@@ -313,9 +317,6 @@ namespace BlueDB.IO
 			// while current type is a SubEntity
 			while(EntityUtility.IsSubEntity(currentType)) {
 				++subEntityCount;
-				if(subEntityCount > 1) {
-					writer.WritePropertyName(currentType.Name);
-				}
 				WriteEntityStart(currentType, key, writer, serializer);
 				for(int i = 0; i < fields.Count; ++i) {
 					Field field = fields[i];
@@ -352,13 +353,13 @@ namespace BlueDB.IO
 		{
 			writer.WriteStartObject();
 			// Type
-			writer.WritePropertyName("Type");
+			writer.WritePropertyName(ARRAY_TYPE);
 			serializer.Serialize(writer, entityType.Name);
 			// Key
-			writer.WritePropertyName("Key");
+			writer.WritePropertyName(ARRAY_KEY);
 			serializer.Serialize(writer, key);
 			// Properties
-			writer.WritePropertyName("Properties");
+			writer.WritePropertyName(ARRAY_PROPERTIES);
 			writer.WriteStartObject();
 		}
 
