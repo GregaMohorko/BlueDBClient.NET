@@ -297,7 +297,7 @@ namespace BlueDB.IO
 
 			if(session.ContainsKey(entity.GetType())) {
 				foreach(var keyEntity in session[entity.GetType()]) {
-					if(ReferenceEquals(keyEntity.Value, entity)) {
+					if(keyEntity.Value == entity) {
 						writer.WriteStartObject();
 						writer.WritePropertyName(ARRAY_KEY);
 						serializer.Serialize(writer, keyEntity.Key);
