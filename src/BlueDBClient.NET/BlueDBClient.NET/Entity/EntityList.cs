@@ -30,7 +30,7 @@ using Newtonsoft.Json;
 namespace BlueDB.Entity
 {
 	/// <summary>
-	/// A list of entities. Use it to package a collection of entities to serialize them in a correct JSON format.
+	/// A list of entities. Use it to package a collection of entities to serialize them in a correct JSON format. Most of the times, using a <see cref="List{T}"/> of entities is enough, but in some case, when you or some other library overwrites the <see cref="JsonConvert.DefaultSettings"/>, it will not work as expected and then you should use this collection.
 	/// </summary>
 	/// <typeparam name="T">The type of the entities in the list.</typeparam>
 	[JsonConverter(typeof(EntityListJsonConverter))]

@@ -25,13 +25,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BlueDB.Entity;
+using BlueDB.Utility;
 using GM.Utility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BlueDB.IO
 {
-	internal sealed class EntityListJsonConverter : JsonConverter
+	/// <summary>
+	/// The <see cref="JsonConverter"/> for <see cref="List{T}"/> of <see cref="BlueDBEntity"/> entities.
+	/// </summary>
+	public sealed class EntityListJsonConverter : JsonConverter
 	{
 		/// <summary>
 		/// Determines whether this instance can convert the specified object type.
@@ -39,8 +43,8 @@ namespace BlueDB.IO
 		/// <param name="objectType">Type of the object.</param>
 		public override bool CanConvert(Type objectType)
 		{
-			// can only convert if the type is an EntityList
-			return ReflectionUtility.IsSubclassOfRawGeneric(typeof(EntityList<>), objectType);
+			// can only convert if the type is a List<> of entities
+			return ReflectionUtility.IsSubclassOfRawGeneric(typeof(List<>), objectType) && EntityUtility.IsEntity(objectType.GetGenericFirst());
 		}
 
 		/// <summary>

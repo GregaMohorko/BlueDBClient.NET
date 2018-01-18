@@ -34,7 +34,10 @@ using BlueDB.Utility;
 
 namespace BlueDB.IO
 {
-	internal sealed class EntityJsonConverter : JsonConverter
+	/// <summary>
+	/// The <see cref="JsonConverter"/> for <see cref="BlueDBEntity"/> entities.
+	/// </summary>
+	public sealed class EntityJsonConverter : JsonConverter
 	{
 		internal const string ARRAY_TYPE= "Type";
 		internal const string ARRAY_KEY= "BlueDBKey";
@@ -126,7 +129,7 @@ namespace BlueDB.IO
 						throw new Exception("Bad JSON format: Properties is not an object.");
 					}
 				}
-
+				
 				List<Field> fields = BlueDBEntity.GetAllFields(currentType, false, true);
 				
 				foreach(var property in propertiesObject) {

@@ -29,26 +29,10 @@ using Newtonsoft.Json;
 namespace BlueDB.IO
 {
 	/// <summary>
-	/// Includes utility functions for encoding/decoding entities to/from Json.
+	/// Includes utility functions for encoding/decoding entities to/from Json. You don't need to use methods from this class.
 	/// </summary>
 	public static class JSON
 	{
-		/// <summary>
-		/// Encodes a list of entities to a JSON string.
-		/// </summary>
-		/// <param name="entities">The entities to be encoded.</param>
-		public static string Encode<T>(List<T> entities) where T:BlueDBEntity
-		{
-			EntityList<T> entityList;
-			if(entities is EntityList<T>) {
-				entityList = entities as EntityList<T>;
-			}else {
-				entityList = new EntityList<T>(entities);
-			}
-
-			return JsonConvert.SerializeObject(entityList);
-		}
-
 		/// <summary>
 		/// Encodes provided entity to a JSON string.
 		/// </summary>
@@ -56,6 +40,15 @@ namespace BlueDB.IO
 		public static string Encode(BlueDBEntity entity)
 		{
 			return JsonConvert.SerializeObject(entity);
+		}
+
+		/// <summary>
+		/// Encodes a list of entities to a JSON string.
+		/// </summary>
+		/// <param name="entities">The entities to be encoded.</param>
+		public static string Encode<T>(List<T> entities) where T:BlueDBEntity
+		{
+			return JsonConvert.SerializeObject(entities);
 		}
 
 		/// <summary>
@@ -83,9 +76,9 @@ namespace BlueDB.IO
 		/// <typeparam name="T">The type of the entities in the list.</typeparam>
 		/// <param name="json">A JSON encoded string.</param>
 		/// <returns></returns>
-		public static EntityList<T> DecodeList<T>(string json) where T:BlueDBEntity
+		public static List<T> DecodeList<T>(string json) where T:BlueDBEntity
 		{
-			return JsonConvert.DeserializeObject<EntityList<T>>(json);
+			return JsonConvert.DeserializeObject<List<T>>(json);
 		}
 	}
 }
