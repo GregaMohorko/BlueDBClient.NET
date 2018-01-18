@@ -55,6 +55,16 @@ namespace BlueDB.IO
 		}
 
 		/// <summary>
+		/// Resets the key counter back to zero.
+		/// </summary>
+		public static void ResetKeys()
+		{
+			lock(lock_KEYCounter) {
+				_KEYCounter = 0;
+			}
+		}
+
+		/// <summary>
 		/// Determines whether this instance can convert the specified object type.
 		/// </summary>
 		/// <param name="objectType">Type of the object.</param>

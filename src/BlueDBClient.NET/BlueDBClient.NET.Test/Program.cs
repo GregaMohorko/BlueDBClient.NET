@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using BlueDB.Configuration;
 using BlueDB.IO;
 using BlueDB.Utility;
 using BlueDB.Entity;
@@ -45,7 +44,7 @@ namespace BlueDB.Test
 		}
 
 		/// <summary>
-		/// Tests ManyToOne and OneToMany fields.
+		/// Tests ManyToOne and OneToMany fields. Tests serializing <see cref="List{T}"/> and <see cref="Dictionary{TKey, TValue}"/> of entities.
 		/// </summary>
 		private static void RunTest2()
 		{
@@ -57,34 +56,70 @@ namespace BlueDB.Test
 
 			List<Test2.Entity.User> users = Test2.Data.GetDummy();
 
-			// version 1: uses raw List<>
-			string json1 = JsonConvert.SerializeObject(users);
+			EntityJsonConverter.ResetKeys();
+
+			// version 1: serializing each entity by itself
+			var jsonUsers = new List<string>();
+			foreach(Test2.Entity.User user in users) {
+				string jsonUser = JSON.Encode(user);
+				jsonUsers.Add(jsonUser);
+			}
+			string json1 = $"[{string.Join(",", jsonUsers)}]";
 			Console.WriteLine($"Version 1 is {json1.Length} characters long.");
-			//Console.WriteLine(JArray.Parse(json).ToString());
+			//Console.WriteLine(JArray.Parse(json1).ToString());
 			List<Test2.Entity.User> usersDecoded = JsonConvert.DeserializeObject<List<Test2.Entity.User>>(json1);
 			AssertEqual(users, usersDecoded);
 
-			// version 2: uses EntityList<>
-			EntityList<Test2.Entity.User> usersEntityList = new EntityList<Test2.Entity.User>(users);
-			string json2 = JsonConvert.SerializeObject(usersEntityList);
-			Console.WriteLine($"Version 2 is {json2.Length} characters long.");
-			Console.WriteLine($"Version 2 is {json1.Length-json2.Length} characters shorter than version 1.");
-			//Console.WriteLine(JArray.Parse(json2).ToString());
-			EntityList<Test2.Entity.User> usersEntityListDecoded = JsonConvert.DeserializeObject<EntityList<Test2.Entity.User>>(json2);
-			AssertEqual(users, usersEntityListDecoded);
+			EntityJsonConverter.ResetKeys();
 
-			// version 3: uses JSON utility class, which does the same as version 2, but the code is shorter. Uses raw List<>
+			// version 2: uses List<>
+			string json2 = JsonConvert.SerializeObject(users);
+			Console.WriteLine($"Version 2 is {json2.Length} characters long.");
+			Debug.Assert(json2.Length == 1008);
+			Console.WriteLine($"Version 2 is {json1.Length-json2.Length} shorter than version 1.");
+			//Console.WriteLine(JArray.Parse(json2).ToString());
+			List<Test2.Entity.User> usersDecoded2 = JsonConvert.DeserializeObject<List<Test2.Entity.User>>(json2);
+			AssertEqual(users, usersDecoded2);
+
+			EntityJsonConverter.ResetKeys();
+
+			// version 3: uses JSON utility class, which does the same as version 2, but the code is shorter
 			string json3 = JSON.Encode(users);
 			Debug.Assert(json2.Length == json3.Length);
 			Console.WriteLine("Version 3 is the same length as version 2.");
-			usersEntityListDecoded = JSON.DecodeList<Test2.Entity.User>(json3);
-			AssertEqual(users, usersEntityListDecoded);
+			List<Test2.Entity.User> usersDecoded3 = JSON.DecodeList<Test2.Entity.User>(json3);
+			AssertEqual(users, usersDecoded3);
 			
 			// the type should be determined from the json
-			JArray jsonArray = JArray.Parse(json3);
+			JArray jsonArray = JArray.Parse(json2);
 			BlueDBEntity user1 = JSON.Decode(jsonArray[0].ToString());
 			Debug.Assert(user1 is Test2.Entity.User);
 			Debug.Assert(EntityUtility.AreEqual(user1, users[0]));
+
+			// tests dictionary
+			var dictionaryOfUsers = new Dictionary<string, Test2.Entity.User>();
+			foreach(var user in users) {
+				dictionaryOfUsers.Add(user.Name, user);
+			}
+			string jsonOfDict = JsonConvert.SerializeObject(dictionaryOfUsers);
+			//Console.WriteLine(JObject.Parse(jsonOfDict).ToString());
+			Debug.Assert(jsonOfDict.Length == 1045);
+			var dictionaryOfUsersDecoded =JsonConvert.DeserializeObject<Dictionary<string,Test2.Entity.User>>(jsonOfDict);
+			AssertEqual(dictionaryOfUsers, dictionaryOfUsersDecoded);
+
+			// tests dictionary of entity lists
+			var usersCopy = new List<Test2.Entity.User>(users);
+			var carsOfUsers = users.Select(user => user.Car).ToList();
+			var dictionaryOfLists = new Dictionary<string, List<BlueDBEntity>>
+			{
+				{ nameof(usersCopy), usersCopy.Cast<BlueDBEntity>().ToList() },
+				{ nameof(carsOfUsers), carsOfUsers.Cast<BlueDBEntity>().ToList() }
+			};
+			jsonOfDict = JsonConvert.SerializeObject(dictionaryOfLists);
+			//Console.WriteLine(JObject.Parse(jsonOfDict).ToString());
+			Debug.Assert(jsonOfDict.Length == 1110);
+			var dictionaryOfListsDecoded = JsonConvert.DeserializeObject<Dictionary<string, List<BlueDBEntity>>>(jsonOfDict);
+			AssertEqual(dictionaryOfLists, dictionaryOfListsDecoded);
 		}
 
 		/// <summary>
@@ -102,7 +137,7 @@ namespace BlueDB.Test
 
 			string json = JSON.Encode(users);
 			//Console.WriteLine(JArray.Parse(json).ToString());
-			EntityList<Test3.Entity.User> usersDecoded = JSON.DecodeList<Test3.Entity.User>(json);
+			List<Test3.Entity.User> usersDecoded = JSON.DecodeList<Test3.Entity.User>(json);
 			AssertEqual(users, usersDecoded);
 		}
 
@@ -115,6 +150,36 @@ namespace BlueDB.Test
 				T entity1 = list1[i];
 				T entity2 = list2[i];
 				Debug.Assert(EntityUtility.AreEqual(entity1, entity2));
+			}
+		}
+
+		private static void AssertEqual<T>(Dictionary<string,T> dict1, Dictionary<string,T> dict2) where T:BlueDBEntity
+		{
+			Debug.Assert(dict1 != null);
+			Debug.Assert(dict2 != null);
+			Debug.Assert(dict1.Count == dict2.Count);
+			for(int i = dict1.Count-1; i >= 0; --i) {
+				string key1 = dict1.Keys.ElementAt(i);
+				string key2 = dict2.Keys.ElementAt(i);
+				Debug.Assert(key1 == key2);
+				T entity1 = dict1[key1];
+				T entity2 = dict2[key2];
+				Debug.Assert(EntityUtility.AreEqual(entity1, entity2));
+			}
+		}
+
+		private static void AssertEqual<T>(Dictionary<string,List<T>> dict1,Dictionary<string,List<T>> dict2) where T:BlueDBEntity
+		{
+			Debug.Assert(dict1 != null);
+			Debug.Assert(dict2 != null);
+			Debug.Assert(dict1.Count == dict2.Count);
+			for(int i = dict1.Count - 1; i >= 0; --i) {
+				string key1 = dict1.Keys.ElementAt(i);
+				string key2 = dict2.Keys.ElementAt(i);
+				Debug.Assert(key1 == key2);
+				List<T> entityList1 = dict1[key1];
+				List<T> entityList2 = dict2[key2];
+				AssertEqual(entityList1, entityList2);
 			}
 		}
 	}
