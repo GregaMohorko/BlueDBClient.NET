@@ -81,7 +81,7 @@ namespace BlueDB.Utility
 			// add the pair to the session
 			session[type1].Add(Tuple.Create(entity1, entity2));
 
-			List<Field> fieldList = BlueDBEntity.GetAllFields(type1, true);
+			List<Field> fieldList = BlueDBEntity.GetAllFields(type1, true, true);
 
 			foreach(Field field in fieldList) {
 				object value1 = entity1.GetPropertyValue(field.Name);
