@@ -163,8 +163,16 @@ namespace BlueDB.IO
 								case JTokenType.Integer:
 									if(field.Type == typeof(int)) {
 										propertyValue = jPropertyValue.Value<int?>();
-									}else if(field.Type == typeof(long)) {
+									} else if(field.Type==typeof(uint)) {
+										propertyValue = jPropertyValue.Value<uint?>();
+									} else if(field.Type == typeof(long)) {
 										propertyValue = jPropertyValue.Value<long?>();
+									} else if(field.Type == typeof(ulong)) {
+										propertyValue = jPropertyValue.Value<ulong?>();
+									} else if(field.Type == typeof(short)) {
+										propertyValue = jPropertyValue.Value<short?>();
+									} else if(field.Type == typeof(ushort)) {
+										propertyValue = jPropertyValue.Value<ushort?>();
 									} else if(field.Type.IsEnum) {
 										propertyValue = jPropertyValue.Value<long?>();
 										propertyValue = Enum.ToObject(field.Type, propertyValue);
