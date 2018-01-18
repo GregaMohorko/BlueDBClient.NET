@@ -63,6 +63,8 @@
     <Compile Include="Entity\Fields\Field.cs" />
     <Compile Include="Entity\Fields\FieldType.cs" />
     <Compile Include="Entity\INonTableEntityClass.cs" />
+    <Compile Include="IO\EntityDictionaryJsonConverter.cs" />
+    <Compile Include="IO\EntityDictionaryOfListsJsonConverter.cs" />
     <Compile Include="IO\EntityJsonConverter.cs" />
     <Compile Include="IO\EntityListJsonConverter.cs" />
     <Compile Include="IO\JSON.cs" />

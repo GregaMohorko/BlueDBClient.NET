@@ -26,6 +26,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BlueDB.Entity;
 using GM.Utility;
+using Newtonsoft.Json;
 
 namespace BlueDB.Configuration
 {
@@ -54,7 +55,20 @@ namespace BlueDB.Configuration
 			if(_instance != null) {
 				BlueDBEntity.ClearAllFields();
 			}
+
 			_instance = new BlueDBProperties();
+
+			// register the converters globally (and hope that nobody overrides this setting)
+			// https://stackoverflow.com/questions/19510532/registering-a-custom-jsonconverter-globally-in-json-net
+			JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
+			{
+				Converters = new List<JsonConverter>()
+				{
+					new EntityListJsonConverter(),
+					new EntityDictionaryJsonConverter(),
+					new EntityDictionaryOfListsJsonConverter()
+				}
+			};
 		}
 
 		/// <summary>
