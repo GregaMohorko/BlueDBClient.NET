@@ -361,18 +361,30 @@ namespace BlueDB.Entity
 		#region INTERNAL STATIC UTILITY
 		internal static void RegisterField(Type entityType, Field field)
 		{
-			if(entityType!=typeof(BlueDBEntity) && !EntityUtility.IsEntity(entityType)) {
+			if(entityType != typeof(BlueDBEntity) && !EntityUtility.IsEntity(entityType)) {
 				throw new ArgumentException($"Cannot register field '{field.Name}' because the type '{entityType}' is not a subclass of BlueDBEntity.");
 			}
 
-			List<Field> fieldsOfEntityType;
-			List<Field> fieldsOfEntityTypeWithHidden;
+			RegisterEntityType(entityType);
+			
+			AllFieldsWithHidden[entityType].Add(field);
+			if(!field.IsHidden) {
+				AllFields[entityType].Add(field);
+			}
+		}
+
+		internal static void RegisterEntityType(Type entityType)
+		{
+			if(entityType != typeof(BlueDBEntity) && !EntityUtility.IsEntity(entityType)) {
+				throw new ArgumentException($"Cannot register type '{entityType}' because it is not a subclass of BlueDBEntity.");
+			}
+			
 			if(AllFields.ContainsKey(entityType)) {
-				fieldsOfEntityType = AllFields[entityType];
-				fieldsOfEntityTypeWithHidden = AllFieldsWithHidden[entityType];
+				// already registered
+				return;
 			} else {
-				fieldsOfEntityType = new List<Field>();
-				fieldsOfEntityTypeWithHidden = new List<Field>();
+				var fieldsOfEntityType = new List<Field>();
+				var fieldsOfEntityTypeWithHidden = new List<Field>();
 				AllFields.Add(entityType, fieldsOfEntityType);
 				AllFieldsWithHidden.Add(entityType, fieldsOfEntityTypeWithHidden);
 				// if it is a StrongEntity, add the fields of the BlueDBEntity
@@ -381,11 +393,6 @@ namespace BlueDB.Entity
 					fieldsOfEntityType.AddRange(bluedbFields);
 					fieldsOfEntityTypeWithHidden.AddRange(bluedbFields);
 				}
-			}
-			
-			fieldsOfEntityTypeWithHidden.Add(field);
-			if(!field.IsHidden) {
-				fieldsOfEntityType.Add(field);
 			}
 		}
 

@@ -22,11 +22,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using BlueDB.Entity;
-using GM.Utility;
+using BlueDB.Entity.Fields;
+using BlueDB.IO;
 using Newtonsoft.Json;
+using BlueDB.Utility;
 
 namespace BlueDB.Configuration
 {
@@ -91,6 +94,18 @@ namespace BlueDB.Configuration
 			EntityNamespace = entitySampleType.Namespace;
 			Assembly assembly = Assembly.GetAssembly(entitySampleType);
 			EntityAssemblyName = assembly.FullName;
+
+			// call all classes defined in the entity namespace so that the fields (which are static fields of the class) get registered
+			IEnumerable<Type> allEntityTypes = assembly.GetTypesInNamespace(EntityNamespace).Where(t => EntityUtility.IsEntity(t));
+			foreach(Type entityType in allEntityTypes) {
+				entityType.CallStaticConstructor();
+				// if an entity type has zero database fields (abstract strong entity for example), the static constructor does nothing
+				IEnumerable<FieldInfo> allFields = entityType.GetRuntimeFields().Where(fi => fi.FieldType==typeof(Field));
+				if(!allFields.Any()) {
+					// register this empty entity type
+					BlueDBEntity.RegisterEntityType(entityType);
+				}
+			}
 		}
 	}
 }
