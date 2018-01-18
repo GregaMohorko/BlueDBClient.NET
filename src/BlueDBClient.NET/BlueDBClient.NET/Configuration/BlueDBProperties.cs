@@ -69,7 +69,7 @@ namespace BlueDB.Configuration
 		/// <summary>
 		/// The format for serializing <see cref="DateTime"/> properties.
 		/// </summary>
-		public string Format_DateTime = "yyyy-MM-dd hh:mm:ss";
+		public string Format_DateTime = "yyyy-MM-dd HH:mm:ss";
 
 		private BlueDBProperties()
 		{
