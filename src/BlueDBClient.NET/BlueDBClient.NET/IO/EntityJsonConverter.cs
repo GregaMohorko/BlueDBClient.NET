@@ -255,6 +255,8 @@ namespace BlueDB.IO
 				if(parentType != EntityUtility.GetParentEntity(currentType)) {
 					throw new Exception($"Bad JSON format: parent type of '{currentType.Name}' should be '{currentType.BaseType.Name}', but it is '{parentType.Name}'.");
 				}
+				// add the same object to the session with the parents key, because it is actually the same entity
+				session.Add(parentKey, entityObject);
 				currentType = parentType;
 				currentJObject = parentJObject;
 				parentJObject = null;
