@@ -31,6 +31,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using GM.Utility;
 using BlueDB.Utility;
+using System.ComponentModel;
 
 namespace BlueDB.IO
 {
@@ -173,7 +174,7 @@ namespace BlueDB.IO
 								case JTokenType.Integer:
 									if(field.Type == typeof(int)) {
 										propertyValue = jPropertyValue.Value<int?>();
-									} else if(field.Type==typeof(uint)) {
+									} else if(field.Type == typeof(uint)) {
 										propertyValue = jPropertyValue.Value<uint?>();
 									} else if(field.Type == typeof(long)) {
 										propertyValue = jPropertyValue.Value<long?>();
@@ -184,10 +185,12 @@ namespace BlueDB.IO
 									} else if(field.Type == typeof(ushort)) {
 										propertyValue = jPropertyValue.Value<ushort?>();
 									} else if(field.Type.IsEnum) {
-										propertyValue = jPropertyValue.Value<long?>();
-										propertyValue = Enum.ToObject(field.Type, propertyValue);
+										long longValue = jPropertyValue.Value<long?>().Value;
+										propertyValue = Enum.ToObject(field.Type, longValue);
 									} else {
-										throw new Exception($"Field '{field.Name}' was of wrong type: should be either int, long or enum.");
+										// try to parse with the default type converter anyway
+										string stringValue = jPropertyValue.Value<string>();
+										propertyValue=TypeDescriptor.GetConverter(field.Type).ConvertFrom(stringValue);
 									}
 									break;
 								case JTokenType.Float:
