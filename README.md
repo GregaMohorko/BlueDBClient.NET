@@ -2,6 +2,7 @@
 A client library in .NET for [BlueDB](https://github.com/GregaMohorko/BlueDB) library. Includes base classes for entities and supports JSON encoding/decoding of entities.
 
 [![Release](https://img.shields.io/github/release/GregaMohorko/BlueDBClient.NET.svg?style=flat-square)](https://github.com/GregaMohorko/BlueDBClient.NET/releases/latest)
+[![NuGet](https://img.shields.io/nuget/v/BlueDB.svg?style=flat-square)](https://www.nuget.org/packages/BlueDB)
 
 ## Documentation & Tutorials
 You can read the documentation and tutorials under the [Wiki](https://github.com/GregaMohorko/BlueDBClient.NET/wiki).

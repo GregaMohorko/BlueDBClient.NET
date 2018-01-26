@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("BlueDB")]
-[assembly: AssemblyDescription("A client library for BlueDB library.")]
+[assembly: AssemblyDescription("A client library for BlueDB library. Includes base classes for entities and supports JSON encoding/decoding of entities.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Grega Mohorko")]
 [assembly: AssemblyProduct("BlueDB")]
