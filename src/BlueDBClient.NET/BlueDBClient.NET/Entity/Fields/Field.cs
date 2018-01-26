@@ -122,7 +122,7 @@ namespace BlueDB.Entity.Fields
 		[MethodImpl(MethodImplOptions.NoInlining)]
 		public static Field Register(string name)
 		{
-			Type entityType = Utility.ReflectionUtility.GetCallingType();
+			Type entityType = ReflectionUtility.GetCallingType();
 			return new Field(name, entityType, false);
 		}
 
@@ -134,7 +134,7 @@ namespace BlueDB.Entity.Fields
 		[MethodImpl(MethodImplOptions.NoInlining)]
 		public static Field RegisterHidden(string name)
 		{
-			Type entityType = Utility.ReflectionUtility.GetCallingType();
+			Type entityType = ReflectionUtility.GetCallingType();
 			return new Field(name,entityType, true);
 		}
 	}

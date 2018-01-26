@@ -190,7 +190,7 @@ namespace BlueDB.IO
 									} else {
 										// try to parse with the default type converter anyway
 										string stringValue = jPropertyValue.Value<string>();
-										propertyValue=TypeDescriptor.GetConverter(field.Type).ConvertFrom(stringValue);
+										propertyValue = field.Type.GetConverter().ConvertFrom(stringValue);
 									}
 									break;
 								case JTokenType.Float:
