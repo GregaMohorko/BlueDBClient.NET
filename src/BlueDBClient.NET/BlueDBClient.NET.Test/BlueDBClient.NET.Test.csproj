@@ -33,9 +33,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GM.Utility, Version=1.2.0.1, Culture=neutral, PublicKeyToken=a1ae152199607549, processorArchitecture=MSIL">
+      <HintPath>..\packages\GM.Utility.1.2.0.1\lib\netstandard2.0\GM.Utility.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -68,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BlueDBClient.NET\BlueDBClient.NET.csproj">
-      <Project>{862f64b2-d903-4204-83b1-7244a6d48661}</Project>
+      <Project>{b38b874a-9c95-4eb3-8f83-b174f0171746}</Project>
       <Name>BlueDBClient.NET</Name>
     </ProjectReference>
   </ItemGroup>

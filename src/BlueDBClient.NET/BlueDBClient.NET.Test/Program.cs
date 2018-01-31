@@ -20,8 +20,10 @@ namespace BlueDB.Test
 			RunTest2();
 			RunTest3();
 
-			Console.Write("TESTING FINISHED");
-			Console.ReadKey(true);
+			Console.WriteLine("TESTING FINISHED");
+			if(Debugger.IsAttached) {
+				Console.ReadKey(true);
+			}
 		}
 
 		/// <summary>

@@ -33,12 +33,12 @@ List<User> users = JSON.DecodeList<User>(json);
 JSON utility class simply uses the [JSON.NET](http://www.newtonsoft.com/json) library, so you can of course encode/decode entity objects on your own.
 
 ## Requirements
-.NET Framework 4.6.1
+.NET Standard 2.0
 
 ## Author and License
 
 Grega Mohorko ([www.mohorko.info](https://www.mohorko.info))
 
-Copyright (c) 2017 Grega Mohorko
+Copyright (c) 2018 Grega Mohorko
 
 [Apache License 2.0](./LICENSE)
