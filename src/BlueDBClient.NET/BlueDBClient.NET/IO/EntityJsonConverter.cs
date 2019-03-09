@@ -162,13 +162,17 @@ namespace BlueDB.IO
 						case FieldType.PROPERTY:
 							switch(jPropertyValue.Type) {
 								case JTokenType.String:
-									if(field.Type == typeof(TimeSpan)) {
+									if(field.Type == typeof(string)) {
+										propertyValue = jPropertyValue.Value<string>();
+									} else if(field.Type == typeof(TimeSpan)) {
 										string stringValue= jPropertyValue.Value<string>();
 										propertyValue = TimeSpan.Parse(stringValue);
 									} else if(field.Type == typeof(DateTime)) {
 										propertyValue= jPropertyValue.Value<DateTime?>();
 									} else {
-										propertyValue = jPropertyValue.Value<string>();
+										// try to parse with the default type converter anyway
+										string stringValue = jPropertyValue.Value<string>();
+										propertyValue = field.Type.GetConverter().ConvertFrom(stringValue);
 									}
 									break;
 								case JTokenType.Integer:

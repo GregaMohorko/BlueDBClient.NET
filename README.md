@@ -39,6 +39,6 @@ JSON utility class simply uses the [JSON.NET](http://www.newtonsoft.com/json) li
 
 Grega Mohorko ([www.mohorko.info](https://www.mohorko.info))
 
-Copyright (c) 2018 Grega Mohorko
+Copyright (c) 2019 Grega Mohorko
 
 [Apache License 2.0](./LICENSE)
