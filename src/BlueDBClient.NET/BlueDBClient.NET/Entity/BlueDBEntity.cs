@@ -200,9 +200,18 @@ namespace BlueDB.Entity
 		/// <param name="mergeInnerEntityProperties">If true, the inner BlueDBEntity properties (when the ID is the same in this instance and the buyer) will also get merged. If false, they will only be changed if the buyers property value is null.</param>
 		public void Merge(BlueDBEntity buyer,bool mergeInnerEntityProperties=true)
 		{
+			List<BlueDBEntity> done = null;
+			if(mergeInnerEntityProperties) {
+				done = new List<BlueDBEntity> { this };
+			}
+			Merge(buyer, mergeInnerEntityProperties, done);
+		}
+
+		private void Merge(BlueDBEntity buyer,bool mergeInnerEntityProperties,List<BlueDBEntity> done)
+		{
 			Type thisInstanceType = GetType();
 
-			List<Field> databaseFieldsWithoutID = GetAllFields(thisInstanceType, true,true);
+			List<Field> databaseFieldsWithoutID = GetAllFields(thisInstanceType, true, true);
 			databaseFieldsWithoutID.Remove(IDField);
 			List<Field> hiddenDatabaseFields = GetAllHiddenFields(thisInstanceType, true);
 
@@ -210,16 +219,16 @@ namespace BlueDB.Entity
 				object buyerValue = buyer.GetPropertyValue(databaseField.Name);
 				object thisValue = this.GetPropertyValue(databaseField.Name);
 
-				if(buyerValue==null && thisValue == null) {
+				if(buyerValue == null && thisValue == null) {
 					continue;
 				}
 
-				if(buyerValue==null && hiddenDatabaseFields.Contains(databaseField)) {
+				if(buyerValue == null && hiddenDatabaseFields.Contains(databaseField)) {
 					// don't nullify hidden properties
 					continue;
 				}
 
-				if(!databaseField.IsEntity || databaseField.DataType==FieldType.LIST) {
+				if(!databaseField.IsEntity || databaseField.DataType == FieldType.LIST) {
 					// simply set the property to the buyers value
 					this.SetProperty(databaseField.Name, buyerValue);
 				} else {
@@ -228,9 +237,15 @@ namespace BlueDB.Entity
 						BlueDBEntity buyerEntityValue = buyerValue as BlueDBEntity;
 						BlueDBEntity thisEntityValue = thisValue as BlueDBEntity;
 
+						if(done.Any(bdbe => ReferenceEquals(bdbe, thisEntityValue))) {
+							// already merged this entity
+							continue;
+						}
+						done.Add(thisEntityValue);
+
 						if(buyerEntityValue == thisEntityValue) {
 							// same ID, check inside
-							thisEntityValue.Merge(buyerEntityValue);
+							thisEntityValue.Merge(buyerEntityValue, true, done);
 						} else {
 							// is not the same entity
 							this.SetProperty(databaseField.Name, buyerValue);
