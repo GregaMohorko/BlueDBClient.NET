@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2018 Grega Mohorko
+   Copyright 2020 Gregor Mohorko
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 
 Project: BlueDBClient.NET
 Created: 2018-1-5
-Author: GregaMohorko
+Author: Gregor Mohorko
 */
 
 using System;
@@ -37,69 +37,56 @@ namespace BlueDB.Entity.Fields
 		/// <summary>
 		/// Gets the name of the field.
 		/// </summary>
-		public string Name => _name;
-		private readonly string _name;
-
+		public string Name { get; }
 		/// <summary>
 		/// Gets the type of the field.
 		/// </summary>
-		public Type Type => _type;
-		private readonly Type _type;
-
+		public Type Type { get; }
 		/// <summary>
 		/// Gets the type of the entity field, if it represents an entity. If it is a list of entities, returns the type of entity.
 		/// </summary>
-		public Type TypeOfEntity => _typeOfEntity;
-		private readonly Type _typeOfEntity;
-
+		public Type TypeOfEntity { get; }
 		/// <summary>
 		/// Gets the type of the entity in which this field is defined.
 		/// </summary>
-		public Type EntityType => _entityType;
-		private readonly Type _entityType;
-
+		public Type EntityType { get; }
 		/// <summary>
 		/// Gets the field data type (property, entity, list).
 		/// </summary>
-		public FieldType DataType => _dataType;
-		private readonly FieldType _dataType;
-
+		public FieldType DataType { get; }
 		/// <summary>
 		/// Returns true if this field represents an entity or a list of entities.
 		/// </summary>
-		public bool IsEntity => _isEntity;
-		private readonly bool _isEntity;
-
+		public bool IsEntity { get; }
 		/// <summary>
 		/// Determines whether this field is hidden. Hidden fields are almost always ignored when loading etc.. (use this for passwords and so on).
 		/// </summary>
-		public bool IsHidden => _isHidden;
-		private readonly bool _isHidden;
+		public bool IsHidden { get; }
 
 		private Field(string name,Type entityType, bool isHidden)
 		{
-			_name = name;
-			_entityType = entityType;
-			_isHidden = isHidden;
+			Name = name;
+			EntityType = entityType;
+			IsHidden = isHidden;
 
 			// determine the field type
-			_type = ReflectionUtility.GetPropertyType(EntityType, Name);
+			Type = ReflectionUtility.GetPropertyType(EntityType, Name);
 
 			// determine the data type
 			if(EntityUtility.IsEntity(Type)) {
-				_dataType = FieldType.ENTITY;
-				_isEntity = true;
-				_typeOfEntity = Type;
+				DataType = FieldType.ENTITY;
+				IsEntity = true;
+				TypeOfEntity = Type;
 			}else if(ReflectionUtility.IsGenericList(Type)) {
-				_dataType = FieldType.LIST;
+				DataType = FieldType.LIST;
 				Type typeOfList = ReflectionUtility.GetGenericFirst(Type);
 				if(typeOfList.IsSubclassOf(typeof(BlueDBEntity))) {
-					_isEntity = true;
-					_typeOfEntity = typeOfList;
+					IsEntity = true;
+					TypeOfEntity = typeOfList;
 				}
 			}else {
-				_dataType = FieldType.PROPERTY;
-				_isEntity = false;
+				DataType = FieldType.PROPERTY;
+				IsEntity = false;
 			}
 
 			// register the field for the entity type

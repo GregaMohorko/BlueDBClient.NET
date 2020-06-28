@@ -1,5 +1,5 @@
 ﻿/*
-   Copyright 2018 Grega Mohorko
+   Copyright 2020 Gregor Mohorko
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 
 Project: BlueDBClient.NET
 Created: 2018-1-5
-Author: GregaMohorko
+Author: Gregor Mohorko
 */
 
 using System;
@@ -97,11 +97,11 @@ namespace BlueDB.Entity
 		public static bool operator ==(BlueDBEntity entity1,BlueDBEntity entity2)
 		{
 			// if both are null
-			if((object)entity1==null && (object)entity2 == null) {
+			if(entity1 is null && entity2 is null) {
 				return true;
 			}
 			// if any of them is null
-			if((object)entity1 == null || (object)entity2 == null) {
+			if(entity1 is null || entity2 is null) {
 				return false;
 			}
 
